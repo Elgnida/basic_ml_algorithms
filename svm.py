@@ -5,40 +5,33 @@ from sklearn.metrics import accuracy_score
 
 #SVM with soft-margin
 class SVM:
-    def __init__(self, n_iter=1000, C=1.0, lr=0.001, random_state=None):
-        self.n_iter = n_iter
+
+    def __init__(self, alpha = 0.001, C = 0.01, n_iterations = 1000):
+        self.alpha = alpha
         self.C = C
-        self.lr = lr
-        if random_state is not None:
-            np.random.seed(random_state)
+        self.n_iterations = n_iterations
+        self.w = None
+        self.b = None
+
 
     def fit(self, X, y):
-        n, m = X.shape
-        self.w = np.random.normal(0, 0.01, m)
-        self.b = 0.0
-        self.loss = []
 
-        for _ in range(self.n_iter):
-            self.loss.append(self.cost_func(X, y))
-            for i in range(n):
-                margin = y[i] * (np.dot(X[i], self.w) + self.b)
-                if margin >= 1:
-                    w_grad = self.w
-                    b_grad = 0
+        n_samples, n_features = X.shape
+        self.w = np.zeros(n_features)
+        self.b = 0
+
+        for _ in range(self.n_iterations):
+            for i, Xi in enumerate(X):
+                if y[i] * (np.dot(Xi, self.w) - self.b) >= 1 :
+                    self.w -= self.alpha * (2 * self.C * self.w)
                 else:
-                    w_grad = self.w - self.C * y[i] * X[i]
-                    b_grad = -self.C * y[i]
-
-                self.w -= self.lr * w_grad
-                self.b -= self.lr * b_grad
-
-    def cost_func(self, X, y):
-        margin = y * (np.dot(X, self.w) + self.b)
-        hinge_losses = np.maximum(0, 1 - margin)
-        return 0.5 * np.dot(self.w, self.w) + self.C * np.sum(hinge_losses)
+                    self.w -= self.alpha * (2 * self.C * self.w - np.dot(Xi, y[i]))
+                    self.b -= self.alpha * y[i]
 
     def predict(self, X):
-        return np.sign(np.dot(X, self.w) + self.b)
+        pred = np.dot(X, self.w) - self.b
+        result = [1 if val > 0 else -1 for val in pred]
+        return result
 
 if __name__ == "__main__":
     X_train, y_train = make_blobs(n_samples=100, n_features=2, centers=2, cluster_std=2.)
@@ -54,15 +47,15 @@ if __name__ == "__main__":
 
     x_disp = np.linspace(np.min(X_train[:,0]), np.max(X_train[:,0]), num=10)
     #optimal hyperplane
-    y = lambda x: -(x * w[0] + b) / w[1]
+    y = lambda x: (-x * w[0] + b) / w[1]
     y_disp = [y(x) for x in x_disp]
     plt.plot(x_disp, y_disp, 'red', label='SVM')
     #first edge of the hyperplane
-    y = lambda x: -(x * w[0] - 1 + b) / w[1]
+    y = lambda x: (-x * w[0] - 1 + b) / w[1]
     y_disp = [y(x) for x in x_disp]
     plt.plot(x_disp, y_disp, 'red', label='edge', linestyle=':', linewidth=0.5)
     #second edge of the hyperplane
-    y = lambda x: -(x * w[0] + 1 + b) / w[1]
+    y = lambda x: (-x * w[0] + 1 + b) / w[1]
     y_disp = [y(x) for x in x_disp]
     plt.plot(x_disp, y_disp, 'red', label='edge', linestyle=':', linewidth=0.5)
     #plot Classification decision boundary

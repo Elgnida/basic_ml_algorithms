@@ -5,3 +5,6 @@ def mse(y_pred, y_true):
 
 def mae(y_pred, y_true):
     return np.sum(np.abs(y_pred - y_true)).mean()
+
+def accuracy(y_pred, y_true):
+    return np.sum(np.equal(y_true, y_pred)) / y_true.size
