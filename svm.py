@@ -6,8 +6,8 @@ from sklearn.metrics import accuracy_score
 #SVM with soft-margin
 class SVM:
 
-    def __init__(self, alpha = 0.001, C = 0.01, n_iterations = 1000):
-        self.alpha = alpha
+    def __init__(self, lr = 0.001, C = 0.01, n_iterations = 1000):
+        self.lr = lr
         self.C = C
         self.n_iterations = n_iterations
         self.w = None
@@ -23,10 +23,10 @@ class SVM:
         for _ in range(self.n_iterations):
             for i, Xi in enumerate(X):
                 if y[i] * (np.dot(Xi, self.w) - self.b) >= 1 :
-                    self.w -= self.alpha * (2 * self.C * self.w)
+                    self.w -= self.lr * (2 * self.C * self.w)
                 else:
-                    self.w -= self.alpha * (2 * self.C * self.w - np.dot(Xi, y[i]))
-                    self.b -= self.alpha * y[i]
+                    self.w -= self.lr * (2 * self.C * self.w - np.dot(Xi, y[i]))
+                    self.b -= self.lr * y[i]
 
     def predict(self, X):
         pred = np.dot(X, self.w) - self.b
