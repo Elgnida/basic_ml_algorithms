@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     w = svm.w
     b = svm.b
-
+    print(w, b)
     x_disp = np.linspace(np.min(X_train[:,0]), np.max(X_train[:,0]), num=10)
     #optimal hyperplane
     y = lambda x: (-x * w[0] + b) / w[1]
