@@ -7,7 +7,6 @@ class LinearRegression:
 
     def __init__(self, n_iteration=100, learning_rate=0.01, penalty='l1', C=0):
         self.n_iteration = n_iteration
-        self.penalty = penalty
         self.learning_rate = learning_rate
         self.C = C
         self.loss_function = {None: MSE_loss(),
