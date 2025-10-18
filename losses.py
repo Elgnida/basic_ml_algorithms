@@ -26,3 +26,9 @@ class MSE_loss:
         w_grad = (2 / X.shape[0]) * (X.T @ (np.dot(X, w) + b - y))
         b_grad = (2 / X.shape[0]) * np.sum((X @ w) + b - y)
         return w_grad, b_grad
+
+class LogLoss:
+    def __call__(self, y_true,  proba):
+        return -np.sum(y_true * np.log(proba) + (1 - y_true) * np.log(1 - proba))
+    def grad(self, X, y_true, proba):
+        return -np.dot(X.T, y_true - proba) / X.shape[0]
